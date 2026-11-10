@@ -1,3 +1,4 @@
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F70404&width=435&lines=RHCSA+10+journey+begins+now!)](https://git.io/typing-svg)
 # RHCSA 10 Practice Project
 
 This project is a hands-on practice environment for preparing for the Red Hat Certified System Administrator (RHCSA) 10 certification. It focuses on real-world system administration tasks commonly tested in the RHCSA exam, with an emphasis on Linux command-line skills, configuration, troubleshooting, and system maintenance.
