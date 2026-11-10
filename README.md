@@ -25,3 +25,5 @@ The goal of this repository is to help build confidence in core RHEL 10 administ
 ## Notes
 
 Use a dedicated virtual machine or lab environment for these exercises. Work through each task carefully, verify the results, and treat the project as a practical learning path toward RHCSA readiness.
+
+![GitHub Streak](https://herokuapp.com)
