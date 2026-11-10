@@ -1,0 +1,23 @@
+Task: Configure ServerA to preserve system journals across reboots.
+
+Configure systemd-journald so that logs are written to persistent storage (disk) rather than just memory.
+
+Restart the logging service to apply the change.
+
+Locate all journal entries related to the sshd service that have occurred since the last boot and save them to /var/log/ssh_boot.log.
+
+Aspects/Domains Covered: Operate running systems (Locate and interpret system log files and journals, Preserve system journals).
+
+
+
+vim /etc/system/journald.conf
+#Storage=persistent
+
+systemctl restart systemd-journald
+journalctl --flush
+ls -ld /var/log/journal
+
+Search and Export Logs: -u for unit, -b for current boot
+
+journalctl -u sshd -b > /var/log/ssh_boot.log
+

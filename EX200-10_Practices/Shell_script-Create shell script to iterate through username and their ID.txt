@@ -1,0 +1,25 @@
+Question 24
+
+Task: Create a shell script named /usr/local/bin/user_audit.sh.
+
+The script should use a loop to iterate through the usernames: root, adm, and ftp.
+
+For each user, it should print the line: "User [username] has ID [uid]".
+
+You must obtain the UID programmatically (e.g., using the id command) inside the loop.
+
+Ensure the script is executable.
+
+Aspects/Domains Covered: Create simple shell scripts (Use Looping constructs, Process output of shell commands within a script).
+
+
+
+vim /usr/local/bin/user_audit.sh
+#!/bin/bash
+for USER in root adm ftp
+do
+	USERID=$(id -u $USER)
+	echo "User $USER has ID $USERID"
+done
+
+chmod +x /usr/local/bin/user_audit.sh

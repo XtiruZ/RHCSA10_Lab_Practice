@@ -1,0 +1,19 @@
+Task: On ServerA, perform a text search and extraction.
+
+Search the file /etc/ssh/sshd_config.
+
+Find all lines that start with the keyword Host (case-insensitive).
+
+Save these lines to the file /root/ssh_hosts.txt.
+
+Ensure the output file does not contain any commented-out lines (lines starting with #).
+
+Aspects/Domains Covered: Understand and use essential tools (Use grep and regular expressions to analyze text, Use input-output redirection).
+
+
+
+grep -i "^Host" /etc/ssh/sshd_config > /root/ssh_hosts.txt
+
+or
+
+find /etc/ssh/sshd_config -exec grep -i "^Host" {} \; > /root/ssh_hosts.txt

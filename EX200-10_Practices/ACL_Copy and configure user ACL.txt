@@ -1,0 +1,25 @@
+Question 23
+
+Task: Configure Access Control Lists (ACLs) on ServerA.
+
+Copy the file /etc/fstab to /var/tmp/fstab_copy.
+
+Configure permissions on /var/tmp/fstab_copy so that the user alex has Read and Write access.
+
+Ensure that the group owner and other users retain their existing permissions.
+
+Do not change the file's owner or group owner.
+
+Aspects/Domains Covered: Create and configure file systems (Diagnose and correct file permission problems - implicitly ACLs)
+
+
+cp /etc/fstab /var/tmp/fstab_copy
+
+setfacl -m u:alex:rw /var/tmp/fstab_copy
+getfacl /var/tmp/fstab_copy
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+Question 22
+
+Task: Manage processes on ServerA.
+
+Start a background process using the command sleep 1000.
+
+Identify the PID (Process ID) of this process.
+
+Adjust the priority (niceness) of this running process to +5.
+
+Finally, kill the process using its PID.
+
+Aspects/Domains Covered: Operate running systems (Identify CPU/memory intensive processes and kill processes, Adjust process scheduling).
+
+
+sleep 1000 &
+
+jobs -l
+or
+ps aux | grep sleep
+
+
+renice -n 5 p 12345
+or
+renice --priority 5 --pid 12345
+
+ps -o pid,ni,comm -p 12345
+
+kill 12345
+
