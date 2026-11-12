@@ -1,0 +1,431 @@
+Task: Configure default file permissions for the user harry on ServerA.
+
+Modify harry's environment so that any new file he creates has the permission rw-r----- (640).
+
+Ensure this setting is persistent (applies every time he logs in).
+
+Aspects/Domains Covered: Manage security (Manage default file permissions
+
+
+vim /home/harry/.bashrc
+umask 027
+
+
+
+===========
+
+Task: Securely transfer a file from ServerA to ServerB (or localhost if ServerB is unavailable).
+
+You have a file named /root/anaconda-ks.cfg on ServerA.
+
+Copy this file to the /tmp directory on the remote system ServerB (or localhost).
+
+Ensure the file attributes (timestamps/permissions) are preserved during the transfer.
+
+Aspects/Domains Covered: Operate running systems (Securely transfer files between systems
+
+
+scp -p /root/anaconda-ks.cfg root@node2:/tmp/
+or
+rsync -av /root/anaconda-ks.cfg root@node2:/tmp/
+
+
+=============
+
+Task: Create a shell script on ServerA named /usr/local/bin/checkfile.sh.
+
+The script should accept one argument (a filename).
+
+Condition:
+
+If the file exists, print "File exists."
+
+If the file does not exist, print "File missing."
+
+Make the script executable.
+
+Aspects/Domains Covered: Create simple shell scripts (Conditionally execute code using if, test, []).
+
+
+vim /usr/local/bin/checkfile.sh
+#!/bin/bash
+if [-f "$1"]; then
+	echo "File exists."
+else
+	echo "File missing."
+fi
+
+chmod +x /usr/local/bin/checkfile.sh
+
+verify:
+/usr/local/bin/checkfile.sh /etc/passwd
+
+
+======================
+
+Task: On ServerA, configure local storage using /dev/sdb. Perform the following actions:
+
+Create a partition on /dev/sdb and configure it as a physical volume.
+
+Create a volume group named myvg.
+
+Create a logical volume named mylv with a size of 500MiB.
+
+Format mylv with the ext4 filesystem.
+
+Persistently mount it at /mylv.
+
+Finally, extend the logical volume and its filesystem by an additional 500MiB (Total size approx 1GiB).
+
+Aspects/Domains Covered: Configure local storage (Create/delete logical volumes, Configure systems to mount file systems, Extend existing logical volumes).
+
+lsblk
+fdisk /dev/sdb n,p,enter,enter,+1G,p,w
+vgcreate myvg /dev/sdb1
+lvcreate -L 500M -n mylv myvg
+mkfs.ext4 /dev/myvg/mylv
+mkdir /mylv
+blkid
+vim /etc/fstab
+uuid /mylv ext4 defaults 0 0
+findmnt --verify
+mount -a
+lvextend -L +500M -r /dev/myvg/mylv
+lvs
+
+
+=======================
+
+
+Task: On ServerA, configure a scheduled task using Systemd Timer Units (not Cron).
+
+Create a script at /usr/local/bin/system-check.sh that appends the current date to /var/log/system-check.log. Ensure it is executable.
+
+Create a systemd service unit named system-check.service that executes this script.
+
+Create a systemd timer unit named system-check.timer that runs the service every 1 minute.
+
+Enable and start the timer.
+
+Aspects/Domains Covered: Deploy, configure, and maintain systems (Schedule tasks using at, cron, and systemd timer units)
+
+
+
+vim /usr/local/bin/system-check.sh
+#!/bin/bash
+date >> /var/log/system-check.log
+
+chmod +x /usr/local/bin/system-check.sh
+
+vim /etc/systemdd/system/system-check.service
+[Unit]
+Desc
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/system-check.sh
+
+
+vim /etc/systemdd/system/system-check.timer
+[Unit]
+Desc
+
+[Timer]
+OnCalendar=minutely
+Unit=system-check.service
+
+[Install]
+WantedBy=timers.target
+
+
+systemctl daemon-reload
+systemctl enable --now system-check.timer
+
+
+verify:
+systemctl list-timers
+systemctl status system-check.timer
+journalctl -u system-check.service
+tail -n 5 /var/log/system-check.log
+
+
+=====================
+
+Task: Create a shell script named /usr/local/bin/flipargs.sh on ServerA.
+
+The script must accept exactly two arguments.
+
+When executed, it should output the second argument first, followed by a space, and then the first argument.
+
+Example: ./flipargs.sh red blue should output blue red.
+
+Ensure the script is executable by all users.
+
+Aspects/Domains Covered: Create simple shell scripts (Process script inputs $1, $2)
+
+vim /usr/local/bin/flipargs.sh
+#!/bin/bash
+echo "$2 $1"
+
+chmod +x /usr/local/bin/flipargs.sh
+
+verify:
+/usr/local/bin/flipargs.sh hello world
+
+
+================
+
+
+Task: Configure user environment and security policies on ServerA:
+
+Skeleton Directory: Ensure that a file named Welcome.txt is automatically created in the home directory of every newly created user.
+
+Password Aging: Configure the system so that password aging controls require users to change their password every 90 days.
+
+Password Length: Ensure that all new passwords must be at least 8 characters long.
+
+Aspects/Domains Covered: Manage users and groups (Manage default file permissions), Manage security (Adjust password aging, Configure password quality).
+
+
+vim /etc/skel/Welcome.txt
+vim /etc/login.defs
+vim /etc/security/pwquality.conf
+
+
+=====================
+
+
+Question 13
+
+Task: On ServerA, configure a collaboration directory for the developers group.
+
+Create a group named developers.
+
+Create a directory /opt/dev-data.
+
+Set the ownership so that the group developers owns the directory.
+
+Configure permissions so that:
+
+The owner and group have Read, Write, and Execute access.
+
+Other users have No access.
+
+Crucial: Files created inside this directory automatically inherit the group ownership developers (use the Set-GID bit).
+
+Aspects/Domains Covered: Create, configure, and maintain systems (Create and configure file systems), Manage users and groups (Modify group memberships, Configure file permissions).
+
+
+groupadd developers
+mkdir -p /opt/dev-data
+chown :devlopers /opt/dev-data
+chmod 2770 /opt/dev-data
+
+
+========================
+
+Task: Add swap space to ServerA non-destructively.
+
+Create a new partition of 512MiB on disk /dev/sdb.
+
+Format and configure this partition as swap space.
+
+Ensure the swap space is activated automatically at system boot.
+
+Aspects/Domains Covered: Configure local storage (List, create, delete partitions; Add swap to a system non-destructively).
+
+
+fdisk /dev/sdb   n,enter,enter,+512M,t,swap,p,w
+partprobe /dev/sdb
+mkswap /dev/sdb1
+blkid
+vim /etc/fstab
+uuid none swap defaults 0 0
+
+swapon -a
+free -h
+
+=========================
+
+Question 18
+
+Task: Configure ServerA to mount a remote directory using Autofs.
+
+Install the necessary NFS and Autofs packages.
+
+Configure Autofs to mount the remote directory 192.168.1.100:/shares/public (replace IP with your lab's NFS server IP) to the local directory /data/public.
+
+The mount should only happen on-demand (when the directory is accessed).
+
+Ensure Autofs starts automatically at boot.
+
+Aspects/Domains Covered: Create and configure file systems (Configure autofs, Mount network file systems using NFS).
+
+
+
+dnf install -y autofs
+systemctl enable --now autofs
+
+vim /etc/auto.master
+/data  /etc/auto.data
+
+vim /etc/auto.data
+public -rw,sync  192.168.1.100:/shares/public
+
+
+cd /data/public
+
+
+============
+
+Question 19
+
+Task: Configure privileged access on ServerA.
+
+Create a user named alex.
+
+Configure sudo access for alex so that they can run the dnf command without entering a password.
+
+Ensure alex cannot run any other commands with sudo.
+
+Aspects/Domains Covered: Manage users and groups (Configure privileged access).
+
+
+useradd alex
+which dnf
+
+vim /etc/sudoers.d/alex
+alex ALL=(ALL)  NOPASSWD: /usr/bin/dnf
+
+
+verify:
+
+su - alex
+sudo dnf repolist
+
+
+=====================
+
+Question 20 (Advanced LVM - VDO) ##############################
+
+Task: On ServerA, create a VDO (Virtual Data Optimizer) logical volume for efficient storage.
+
+Using the existing volume group myvg, create a VDO Logical Volume named vdo_lv.
+
+Set the physical size to 5GiB (to accommodate VDO metadata), and the logical (virtual) size to 20GiB.
+
+Format the volume with xfs and mount it persistently at /vdo_data.
+
+Aspects/Domains Covered: Configure local storage (Create and delete logical volumes - specifically VDO/Thin Provisioning types)
+
+
+dnf install lvm2 vdo -y
+
+lvcreate --type vdo --name vdo_lv --size 5G --virtualsize 20G myvg
+mkfs.xfs /dev/myvg/vdo_lv
+mkdir /vdo_data
+echo "/dev/myvg/vdo_lv  /vdo_data xfs defaults 0 0" >> /etc/fstab
+mount -a 
+
+verify:
+vdostats --human-readable
+or 
+lsblk
+
+Question 21 ##############################################
+
+Task: Configure ServerA to preserve system journals across reboots.
+
+Configure systemd-journald so that logs are written to persistent storage (disk) rather than just memory.
+
+Restart the logging service to apply the change.
+
+Locate all journal entries related to the sshd service that have occurred since the last boot and save them to /var/log/ssh_boot.log.
+
+Aspects/Domains Covered: Operate running systems (Locate and interpret system log files and journals, Preserve system journals)
+
+
+vim /etc/systemd/journald.conf
+[Journal]
+Storage=persistent
+
+systemctl restart systemd-journald
+journalctl --flush
+
+verify:
+ls -ld /var/log/journal
+
+
+=============================
+
+
+Question 22
+
+Task: Manage processes on ServerA.
+
+Start a background process using the command sleep 1000.
+
+Identify the PID (Process ID) of this process.
+
+Adjust the priority (niceness) of this running process to +5.
+
+Finally, kill the process using its PID.
+
+Aspects/Domains Covered: Operate running systems (Identify CPU/memory intensive processes and kill processes, Adjust process scheduling)
+
+
+sleep 1000 &
+ps aux | grep sleep
+or 
+jobs -l
+
+renice -n 5 -p 12345
+kill 12345
+
+===========
+
+Question 23
+
+Task: Configure Access Control Lists (ACLs) on ServerA.
+
+Copy the file /etc/fstab to /var/tmp/fstab_copy.
+
+Configure permissions on /var/tmp/fstab_copy so that the user alex has Read and Write access.
+
+Ensure that the group owner and other users retain their existing permissions.
+
+Do not change the file's owner or group owner.
+
+Aspects/Domains Covered: Create and configure file systems (Diagnose and correct file permission problems - implicitly ACLs)
+
+
+cp /etc/fstab /var/tmp/fstab_copy
+setfacl -m u:alex:rw /var/tmp/fstab_copy
+
+
+========================================
+
+Question 24
+
+Task: Create a shell script named /usr/local/bin/user_audit.sh.
+
+The script should use a loop to iterate through the usernames: root, adm, and ftp.
+
+For each user, it should print the line: "User [username] has ID [uid]".
+
+You must obtain the UID programmatically (e.g., using the id command) inside the loop.
+
+Ensure the script is executable.
+
+Aspects/Domains Covered: Create simple shell scripts (Use Looping constructs, Process output of shell commands within a script)
+
+
+
+
+
+
+
+
+
+
+
