@@ -1,3 +1,4 @@
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F70404&width=435&lines=RHCSA+10+journey+begins+now!)](https://git.io/typing-svg)
 # RHCSA 10 Practice Project
 
 This project is a hands-on practice environment for preparing for the Red Hat Certified System Administrator (RHCSA) 10 certification. It focuses on real-world system administration tasks commonly tested in the RHCSA exam, with an emphasis on Linux command-line skills, configuration, troubleshooting, and system maintenance.
@@ -26,4 +27,4 @@ The goal of this repository is to help build confidence in core RHEL 10 administ
 
 Use a dedicated virtual machine or lab environment for these exercises. Work through each task carefully, verify the results, and treat the project as a practical learning path toward RHCSA readiness.
 
-![GitHub Streak](https://herokuapp.com)
+[![GitHub Streak](https://github-readme-streak-stats.herokuapp.com?user=XtiruZ&theme=highcontrast)](https://git.io/streak-stats)
